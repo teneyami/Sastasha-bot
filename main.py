@@ -21,7 +21,7 @@ RTDAYS = [MONDAY, WEDNESDAY, SATURDAY]
 
 #VERBS = ["когда","када","кода","кагда", "коды"]
 #NOUNS = ["рейд","рэйд", "рт"]
-pattern = 'к[оа]г?д[аы] (р[еэ]йд|рт)'
+PATTERN = 'к[оа]г?д[аы] (р[еэ]йд|рт)'
 
 GUILD_ID = 164062782881398793
 CHANNEL_ID = 989221264143048834
@@ -159,7 +159,7 @@ async def on_message(message):
     if channel.id != CHANNEL_ID:
         return
     msgcontent = message.content.lower()
-    if re.search(pattern, msgcontent):
+    if re.search(PATTERN, msgcontent):
         channel = client.get_channel(CHANNEL_ID)
         msg = await channel.fetch_message(PIN_ID)
         reply = nextraid(msg.content)
