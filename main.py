@@ -4,7 +4,7 @@ import discord
 import logging
 import socket
 import time
-
+import re
 AUTH_KEY = ''
 LOGFILE = "/home/tene/Discord/logs/main.log"
 TIMEDIFF = 1
@@ -19,8 +19,9 @@ SUNDAY = 6
 
 RTDAYS = [MONDAY, WEDNESDAY, SATURDAY]
 
-VERBS = ["когда","када","кода","кагда", "коды"]
-NOUNS = ["рейд","рэйд", "рт"]
+#VERBS = ["когда","када","кода","кагда", "коды"]
+#NOUNS = ["рейд","рэйд", "рт"]
+pattern = 'к[оа]г?д[аы] (р[еэ]йд|рт)'
 
 GUILD_ID = 164062782881398793
 CHANNEL_ID = 989221264143048834
@@ -69,7 +70,6 @@ def add_timezone(msktime):
    # reply = msktime + " (МСК)\n" + amstime + " (АМС)\n" + skydestime + " (СкудecTZ)"
     reply = msktime + " (МСК)\n" + msg
     return reply
-
 
 def nextraid(msg):
     changes = []
@@ -159,15 +159,13 @@ async def on_message(message):
     if channel.id != CHANNEL_ID:
         return
     msgcontent = message.content.lower()
-    for verb in VERBS:
-        for noun in NOUNS:
-            query = verb + " " + noun
-            if query in msgcontent:
-                channel = client.get_channel(CHANNEL_ID)
-                msg = await channel.fetch_message(PIN_ID)
-                reply = nextraid(msg.content)
-                reply_withtimezone = add_timezone(reply)
-                await message.channel.send(reply_withtimezone)
+    if re.search(pattern, msgcontent):
+        channel = client.get_channel(CHANNEL_ID)
+        msg = await channel.fetch_message(PIN_ID)
+        reply = nextraid(msg.content)
+        reply_withtimezone = add_timezone(reply)
+        await message.channel.send(reply_withtimezone)
+
 
 while not check_internet_connection():
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d|%H:%M:%S")
