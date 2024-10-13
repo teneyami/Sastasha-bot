@@ -1,7 +1,7 @@
 use chrono;
 use std::collections::HashMap;
 use reqwest::header;
-const TOKEN: &str = concat!("bot ", include_str!(".token"));
+const TOKEN: &str = concat!("Bot ", include_str!(".token"));
 const CHANNEL_ID: u64 = 989221264143048834;
 //const CHANNEL_ID: u64 = 964233249616453703;
 

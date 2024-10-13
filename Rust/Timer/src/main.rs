@@ -4,7 +4,7 @@ use chrono;
 mod get_rt;
 use crate::get_rt::get_next_rt;
 
-const TOKEN: &str = concat!("bot ", include_str!(".token"));
+const TOKEN: &str = concat!("Bot ", include_str!(".token"));
 const CHANNEL_ID: u64 = 989221264143048834;
 const PIN_ID: u64 = 991733635575197757;
 const PIN_NEXT_RAID: u64 = 1275458504554971136;
@@ -18,12 +18,10 @@ fn invoke_rest() -> Result<(), reqwest::Error> {
     let mut headers = header::HeaderMap::new();
     headers.insert("Authorization", header::HeaderValue::from_static(TOKEN));
     headers.insert("User-Agent", header::HeaderValue::from_static("DiscordBot"));
-
     let client = reqwest::blocking::Client::builder()
-    .default_headers(headers)
-    .build()?;
+        .default_headers(headers)
+        .build()?;
 
-    
     let endpoint : String = format!("https://discord.com/api/v10/channels/{CHANNEL_ID}/messages");
     let mut uri: String = format!("{endpoint}/{PIN_ID}");
     let res = client.get(uri).send()?;
