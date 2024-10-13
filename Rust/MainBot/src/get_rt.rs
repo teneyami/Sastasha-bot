@@ -1,13 +1,14 @@
 use chrono::{Datelike, FixedOffset, NaiveDate, NaiveTime, Utc};
 const RTDAYS: [i32; 3] = [0, 2, 5];
 
-pub fn get_next_rt(msg: String) -> String {
+pub fn get_next_rt(msg: String) -> (String, i64) {
     let now = Utc::now();
     let mut reply: String = String::from("No date found");
     let today = now.date_naive();
     let mut raiddates: [NaiveDate; 9] = [Default::default(); 9];
     let mut raidtimes: [String; 9] = Default::default();
     let mut index = 0;
+    let mut ts: i64 =0;
     for i in [0, 7, 14] {
         for day_int in RTDAYS {
             let mut day_offset: i32 = day_int - (today.weekday().num_days_from_monday() as i32);
@@ -28,7 +29,7 @@ pub fn get_next_rt(msg: String) -> String {
         }
     }
 
-    let mut changes = msg.replace("переносы:\n", "");
+    let mut changes = msg.to_lowercase().replace("переносы:\n", "");
     changes = changes.replace(" -> ", ",");
     changes = changes.replace(" - ", ",");
 
@@ -72,14 +73,15 @@ pub fn get_next_rt(msg: String) -> String {
 
             let str = format!(
                 "Следующий рейд:\n\
-            {}\n\
+            {} (МСК)\n\
             <t:{}:f>",
                 formated_date,
                 datetime.timestamp()
             );
+            ts = datetime.timestamp();
             reply = String::from(str);
             break;
         }
     }
-    return reply;
+    return (reply, ts);
 }

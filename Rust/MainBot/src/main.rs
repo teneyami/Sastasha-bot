@@ -5,7 +5,7 @@ use poise::serenity_prelude::{self as serenity, EditMessage};
 use regex::Regex;
 use crate::get_rt::get_next_rt;
 
-const TOKEN: &str = "";
+const TOKEN: &str = include_str!(".token");
 
 const CHANNEL_ID: u64 = 989221264143048834;
 const PIN_ID: u64 = 991733635575197757;
@@ -71,8 +71,7 @@ async fn event_handler(
                 let next_raid_pin_id = serenity::MessageId::new(PIN_NEXT_RAID);
                 let channel_guid = serenity::ChannelId::new(CHANNEL_ID);
                 let reschedule = channel_guid.message(&ctx, msguid).await?;
-                let reply: String = get_next_rt(reschedule.content.to_lowercase());
-
+                let reply: String = get_next_rt(reschedule.content.to_lowercase()).0;
                 new_message.reply(ctx, format!("{}", reply)).await?;
 
                 let mut old_msg = channel_guid.message(&ctx, next_raid_pin_id).await?;
