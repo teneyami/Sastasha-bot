@@ -286,18 +286,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "disprg2"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "cross",
- "csv",
- "json",
- "openssl",
- "reqwest",
-]
-
-[[package]]
 name = "dunce"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1236,6 +1224,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06794f8f6c5c898b3275aebefa6b8a1cb24cd2c6c79397ab15774837a0bc5755"
 dependencies = [
  "winapi-util",
+]
+
+[[package]]
+name = "tester"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "cross",
+ "csv",
+ "json",
+ "openssl",
+ "reqwest",
 ]
 
 [[package]]
