@@ -286,18 +286,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "disprg2"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "cross",
- "csv",
- "json",
- "openssl",
- "reqwest",
-]
-
-[[package]]
 name = "dunce"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1262,6 +1250,18 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.79",
+]
+
+[[package]]
+name = "timer-rust"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "cross",
+ "csv",
+ "json",
+ "openssl",
+ "reqwest",
 ]
 
 [[package]]

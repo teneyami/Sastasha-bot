@@ -1,30 +1,34 @@
-use chrono::{Datelike, FixedOffset, NaiveDate, NaiveTime, Utc};
-const RTDAYS: [i32; 3] = [0, 2, 5];
+use chrono::{Datelike, FixedOffset, NaiveDate, NaiveTime, Utc, Weekday};
+
+const RTDAYS: [Weekday; 3] = [
+    Weekday::Wed,
+    Weekday::Fri,
+    Weekday::Sun,
+    ];
+
+const TIME_ZONE :i32 = 3 * 60 * 60; 
 
 pub fn get_next_rt(msg: String) -> (String, i64) {
     let now = Utc::now();
     let mut reply: String = String::from("No date found");
     let today = now.date_naive();
-    // let mut raiddates: [NaiveDate; 9] = [Default::default(); 9];
     let mut raiddates = Vec::new();
     let mut raidtimes = Vec::new();
-    let mut ts: i64 =0;
     for i in [0, 7, 14] {
         for day_int in RTDAYS {
-            let mut day_offset: i32 = day_int - (today.weekday().num_days_from_monday() as i32);
+            let mut day_offset: i32 = (day_int.num_days_from_monday() as i32) - (today.weekday().num_days_from_monday() as i32);
             day_offset = ((day_offset % 7) + 7) % 7 + i;
             let day = today + chrono::Duration::days(day_offset as i64);
             raiddates.push(day);
         }
     }
 
-
     for dates in &raiddates {
-        let week_day = dates.weekday().num_days_from_monday();
-        if week_day == 5 {
-            raidtimes.push(String::from("19:00"));
-        } else {
-            raidtimes.push(String::from("20:00"));
+        match dates.weekday() {
+            Weekday::Wed => raidtimes.push(String::from("21:00")),
+            Weekday::Fri => raidtimes.push(String::from("20:00")),
+            Weekday::Sun => raidtimes.push(String::from("19:00")),
+            _ => raidtimes.push(String::from("00:00")),      
         }
     }
 
@@ -65,27 +69,34 @@ pub fn get_next_rt(msg: String) -> (String, i64) {
 
     let mut zipped: Vec<_> = raiddates.into_iter().zip(raidtimes).collect();
     zipped.sort_unstable();
-    (raiddates, raidtimes) = zipped.into_iter().unzip();
 
-    for i in 0..raiddates.len() {
-        if raiddates[i] == Default::default() {
+    let mut ts:i64 = 0;
+    for (raid_date, raid_time) in zipped {
+        if raid_date == Default::default() || today > raid_date {
             continue;
         } else {
-            let formated_date = format!("{} - {}", raiddates[i].format("%d.%m.%Y"), raidtimes[i]);
             let time_obj =
-                NaiveTime::parse_from_str(&raidtimes[i], "%H:%M").expect("should be time");
-            let naive_datetime = raiddates[i].and_time(time_obj);
-            let tz = FixedOffset::east_opt(10800).unwrap();
+                NaiveTime::parse_from_str(&raid_time, "%H:%M").expect("should be time");
+            let naive_datetime = raid_date.and_time(time_obj);
+            let tz = FixedOffset::east_opt(TIME_ZONE).unwrap();
             let datetime = naive_datetime.and_local_timezone(tz).unwrap();
+            ts = datetime.timestamp();
+            
+            //println!("Now: {} | TS: {} | diff: {}",now.timestamp(), ts, now.timestamp() - ts);
+            if now.timestamp() > (ts + 7200)
+            {           
+                continue;
+            }
 
             let str = format!(
                 "Следующий рейд:\n\
-            {} (МСК)\n\
-            <t:{}:f>",
-                formated_date,
-                datetime.timestamp()
+                {} - {} (МСК)\n\
+                <t:{}:f>",
+                
+                raid_date.format("%d.%m.%Y"), raid_time,
+                ts
             );
-            ts = datetime.timestamp();
+            
             reply = String::from(str);
             break;
         }
