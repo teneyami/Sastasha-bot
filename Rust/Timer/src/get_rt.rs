@@ -83,7 +83,7 @@ pub fn get_next_rt(msg: String) -> (String, i64) {
             ts = datetime.timestamp();
             
             //println!("Now: {} | TS: {} | diff: {}",now.timestamp(), ts, now.timestamp() - ts);
-            if now.timestamp() > (ts + 7200)
+            if now.timestamp() > (ts + 10800)
             {           
                 continue;
             }
